@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>My App</title>
+</head>
+<body>
+  <label for="page">Номер страницы:</label>
+  <input type="text" id="page" name="page"><br>
+
+  <label for="limit">Лимит:</label>
+  <input type="text" id="limit" name="limit"><br>
+
+  <button id="submit">Запрос</button>
+
+  <div id="result"></div>
+
+  <script>
+    const pageInput = document.getElementById('page');
+    const limitInput = document.getElementById('limit');
+    const submitButton = document.getElementById('submit');
+    const resultDiv = document.getElementById('result');
+
+    function makeRequest() {
+      const page = parseInt(pageInput.value);
+      const limit = parseInt(limitInput.value);
+
+      if (isNaN(page) || page < 1 || page > 10) {
+        resultDiv.textContent = 'Номер страницы вне диапазона от 1 до 10';
+        return;
+      }
+
+      if (isNaN(limit) || limit < 1 || limit > 10) {
+        resultDiv.textContent = 'Лимит вне диапазона от 1 до 10';
+        return;
+      }
+
+      const url = `https://jsonplaceholder.typicode.com/photos?_page=${page}&_limit=${limit}`;
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          resultDiv.innerHTML = '';
+          data.forEach(item => {
+            const img = document.createElement('img');
+            img.src = item.url;
+            resultDiv.appendChild(img);
+          });
+
+          // Сохранение последнего успешно выполненного запроса
+          localStorage.setItem('lastRequest', JSON.stringify({ page, limit }));
+        })
+        .catch(error => {
+          resultDiv.textContent = 'Ошибка выполнения запроса';
+        });
+    }
+
+    submitButton.addEventListener('click', makeRequest);
+
+    // Восстановление последнего успешно выполненного запроса при загрузке страницы
+    const lastRequest = localStorage.getItem('lastRequest');
+    if (lastRequest) {
+      const { page, limit } = JSON.parse(lastRequest);
+      pageInput.value = page;
+      limitInput.value = limit;
+      makeRequest();
+    }
+  </script>
+</body>
+</html>

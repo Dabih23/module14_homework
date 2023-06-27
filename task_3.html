@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Задание 3</title>
+  </head>
+  <body>
+    <input type="number" id="inputNumber">
+    <button onclick="handleClick()">Нажми меня</button>
+    <div id="output"></div>
+    <script>
+      function handleClick() {
+        const inputNumber = document.getElementById("inputNumber").value;
+        if (inputNumber < 1 || inputNumber > 10) {
+          document.getElementById("output").innerHTML = "число вне диапазона от 1 до 10";
+        } else {
+          const xhr = new XMLHttpRequest();
+          xhr.open("GET", `https://jsonplaceholder.typicode.com/photos?_limit=${inputNumber}`);
+          xhr.onload = function() {
+            if (xhr.status === 200) {
+              const data = JSON.parse(xhr.responseText);
+              console.log(data);
+              const outputDiv = document.getElementById("output");
+              outputDiv.innerHTML = "";
+              data.forEach(item => {
+                const img = document.createElement("img");
+                img.src = item.url;
+                outputDiv.appendChild(img);
+              });
+            } else {
+                console.log('Статус ответа: ', xhr.status);
+            }
+          };
+          xhr.onerror = function() {
+	        console.log('Ошибка! Статус ответа: ', xhr.status);
+	      };
+          xhr.send();
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Number Input</title>
+  </head>
+  <body>
+    <form>
+      <label for="num1">Number 1:</label>
+      <input type="text" id="num1" name="num1"><br><br>
+      <label for="num2">Number 2:</label>
+      <input type="text" id="num2" name="num2"><br><br>
+      <button type="button" onclick="submitForm()">Submit</button>
+    </form>
+    <div id="message"></div>
+    <img id="image" style="display: none;">
+    <script>
+      function submitForm() {
+        const num1 = Number(document.getElementById("num1").value);
+        const num2 = Number(document.getElementById("num2").value);
+        const message = document.getElementById("message");
+        const image = document.getElementById("image");
+        if (isNaN(num1) || isNaN(num2) || num1 < 100 || num1 > 300 || num2 < 100 || num2 > 300) {
+          message.innerHTML = "Одно из чисел вне диапазона от 100 до 300";
+          image.style.display = "none";
+        } else {
+          const imageUrl = `https://dummyimage.com/${num1}x${num2}`;
+          // https://picsum.photos/${num1}/${num2}
+          fetch(imageUrl)
+            .then(response => {
+              if (response.ok) {
+                image.src = imageUrl;
+                image.style.display = "block";
+                message.innerHTML = "";
+              } else {
+                throw new Error("Ошибка загрузки изображения");
+              }
+            })
+            .catch(error => {
+              console.log(error);
+            });
+        }
+      }
+    </script>
+  </body>
+</html>
